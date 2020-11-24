@@ -42,7 +42,7 @@ namespace GeoImagerApi.Services.Implementations
             if (user != null)
             {
                 response.Authenticated = true;
-                response.Payload = new UserPayload { Mail = user.Email, Username = user.Username, Token = generateJwtToken(user) };
+                response.Payload = new UserPayload { Mail = user.Email, Username = user.Username, Token = generateJwtToken(user), Id = user.Id };
             }else
             {
                 response.Errors.Add("User does not exist or bad credentials!");
@@ -78,6 +78,7 @@ namespace GeoImagerApi.Services.Implementations
             {
                 payload.Mail = userModel.Email;
                 payload.Username = userModel.Username;
+                payload.Id = userModel.Id;
             }
 
             return payload;
