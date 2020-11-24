@@ -23,13 +23,6 @@ namespace GeoImagerApi.Controllers
             _authService = authService;
         }
 
-        [Authorize]
-        [HttpGet("test")]
-        public String Test()
-        {
-            return "ok";
-        }
-
         [HttpPost("register")]
         public async Task<RegisterResponse> Register([FromBody] RegisterRequest request)
         {
@@ -52,7 +45,17 @@ namespace GeoImagerApi.Controllers
         [HttpPost("authenticate")]
         public async Task<AuthenticateResponse> Authenticate([FromBody] AuthenticateRequest request)
         {
-            var result = await _authService.AuthenticateAsync(request);
+            var validator = new AuthenticateRequestValidator();
+            var validationResult = validator.Validate(request);
+            var result = new AuthenticateResponse { Authenticated = false, Errors = new List<string>() };
+
+            if (validationResult.IsValid)
+            {
+                result = await _authService.AuthenticateAsync(request);
+            }else
+            {
+                result.Errors.Add("Invalid data!");
+            }
 
             return result;
         }

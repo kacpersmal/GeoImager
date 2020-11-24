@@ -35,7 +35,7 @@ namespace GeoImagerApi.Services.Implementations
 
         public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest request)
         {
-            var response = new AuthenticateResponse { Authenticated = false };
+            var response = new AuthenticateResponse { Authenticated = false, Errors = new List<string>() };
             var hashedPassword = HashPassword(request.Password);
             var user = await _dbContext.Users.FirstOrDefaultAsync(mod => mod.Email == request.Email && mod.HashedPassword == hashedPassword) ;
 
@@ -43,6 +43,9 @@ namespace GeoImagerApi.Services.Implementations
             {
                 response.Authenticated = true;
                 response.Payload = new UserPayload { Mail = user.Email, Username = user.Username, Token = generateJwtToken(user) };
+            }else
+            {
+                response.Errors.Add("User does not exist or bad credentials!");
             }
 
             return response;
