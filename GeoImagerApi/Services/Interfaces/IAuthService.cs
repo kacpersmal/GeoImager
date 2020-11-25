@@ -1,9 +1,6 @@
 ﻿using GeoImagerApi.DataTransferObjects.Request;
 using GeoImagerApi.DataTransferObjects.Result;
 using GeoImagerApi.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GeoImagerApi.Services.Interfaces

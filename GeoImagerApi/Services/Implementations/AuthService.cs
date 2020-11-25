@@ -61,7 +61,7 @@ namespace GeoImagerApi.Services.Implementations
                 return result;
             }
 
-            var model = new UserModel { CreationDate = DateTime.UtcNow, Email = request.Email, Username = request.Username, Verified = false, HashedPassword = HashPassword(request.Password) };
+            var model = new UserModel { CreationDate = DateTime.UtcNow, Email = request.Email, Username = request.Username, Verified = false, HashedPassword = HashPassword(request.Password), UserProfile = new UserProfileModel() };
 
             _dbContext.Users.Add(model);
             _dbContext.SaveChanges();

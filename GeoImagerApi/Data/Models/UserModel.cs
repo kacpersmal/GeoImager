@@ -13,5 +13,7 @@ namespace GeoImagerApi.Data.Models
         public String HashedPassword { get; set; }
         public bool Verified { get; set; }
         public DateTime CreationDate { get; set; }
+
+        public virtual UserProfileModel UserProfile { get; set; }
     }
 }

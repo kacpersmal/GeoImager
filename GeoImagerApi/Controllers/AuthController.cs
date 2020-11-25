@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using GeoImagerApi.DataTransferObjects.Request;
 using GeoImagerApi.DataTransferObjects.Result;
 using GeoImagerApi.DataTransferObjects.Validation;
-using GeoImagerApi.Helpers;
 using GeoImagerApi.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GeoImagerApi.Controllers
