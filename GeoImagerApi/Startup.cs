@@ -36,6 +36,8 @@ namespace GeoImagerApi
             services.AddSingleton<IConfiguration>(Configuration);
 
             services.AddTransient<IAuthService,AuthService>();
+            services.AddTransient<IUserProfileService, UserProfileService>();
+
             services.AddAutoMapper(typeof(MapperConfig));
             services.AddControllers();
             services.AddSwaggerGen(swagger =>
@@ -99,6 +101,7 @@ namespace GeoImagerApi
             app.UseAuthorization();
             app.UseMiddleware<JwtMiddleware>();
 
+            app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
             {

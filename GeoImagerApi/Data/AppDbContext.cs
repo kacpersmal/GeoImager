@@ -1,7 +1,6 @@
 ﻿using GeoImagerApi.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace GeoImagerApi.Data
 {
     public class AppDbContext : DbContext
