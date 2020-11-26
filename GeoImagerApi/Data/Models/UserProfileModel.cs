@@ -9,7 +9,9 @@ namespace GeoImagerApi.Data.Models
     {
         public int Id { get; set; }
 
-        public String ProfilePictureName { get; set; }
+        public String ProfilePicturePath { get; set; }
+        public String ProfileBackgroundPath { get; set; }
+
         public String ProfileDescription { get; set; }
 
         public ICollection<UserProfileModel> Followers { get; set; }
@@ -22,7 +24,8 @@ namespace GeoImagerApi.Data.Models
         public UserProfileModel() 
         { 
             ProfileDescription = "No description :(";
-            ProfilePictureName = "default.png"; 
+            ProfilePicturePath = "default.png";
+            ProfileBackgroundPath = "default.png";
         }
     }
 }

@@ -44,7 +44,7 @@ namespace GeoImagerApi.Services.Implementations
 
         public Task<ImageResponse> GetImage(ImageTypeEnum type, UserProfileModel mod)
         {
-            var path = GetPath(type, mod.ProfilePictureName);
+            var path = GetPath(type, mod.ProfilePicturePath);
            
             if(mod == null) return Task.FromResult(new ImageResponse { ImageAdress = GetDefaultPath(type) });
             if (!File.Exists(Path.Combine(_environment.WebRootPath, path)))

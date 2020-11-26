@@ -10,7 +10,9 @@ namespace GeoImagerApi.Services.Interfaces
 {
     public interface IUserProfileService
     {
-        public Task<UserProfileResponse> ChangeAvatar(UploadImageRequest req,int userId);
+        public Task<UserProfileResponse> SetProfilePicture(UploadImageRequest req,int userId);
+        public Task<UserProfileResponse> SetProfileBackground(UploadImageRequest req, int userId);
+
         public Task<UserProfileResponse> EditUserProfileAsync(EditUserProfileRequest req);
         public Task<UserProfileResponse> GetUserProfileByUserNameAsync(String name);
         public UserProfileFollowersResponse GetUserProfileFollowers(GetUserProfileFollowersRequest req);

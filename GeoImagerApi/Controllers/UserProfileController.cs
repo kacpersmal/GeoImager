@@ -39,20 +39,23 @@ namespace GeoImagerApi.Controllers
         }
 
         [Authorize]
-        [HttpPost("avatar")]
+        [HttpPost("picture")]
         public async Task<UserProfileResponse> ChangeAvatar([FromForm, FormFileDescriptor("Project JSON file", "The project as a JSON file", true, 52_428_800)] UploadImageRequest req)
         {
             var payload = (UserPayload)HttpContext.Items["User"];
           
-            var res = await _userProfileService.ChangeAvatar(req, payload.Id);
+            var res = await _userProfileService.SetProfilePicture(req, payload.Id);
             return res;
         }
-        [HttpGet("avatar")]
-        public async Task<ImageResponse> GetUserProfilePicture(String username)
+      
+        [Authorize]
+        [HttpPost("background")]
+        public async Task<UserProfileResponse> ChangeBackground([FromForm, FormFileDescriptor("Project JSON file", "The project as a JSON file", true, 52_428_800)] UploadImageRequest req)
         {
-            var response = await _userProfileService.GetUserProfilePicture(username);
-            return response;
-        }
+            var payload = (UserPayload)HttpContext.Items["User"];
 
+            var res = await _userProfileService.SetProfileBackground(req, payload.Id);
+            return res;
+        }
     }
 }

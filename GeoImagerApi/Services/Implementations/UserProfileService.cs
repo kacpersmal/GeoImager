@@ -73,7 +73,7 @@ namespace GeoImagerApi.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public async Task<UserProfileResponse> ChangeAvatar(UploadImageRequest req, int userId)
+        public async Task<UserProfileResponse> SetProfilePicture(UploadImageRequest req, int userId)
         {
             var profileModel = await _dbContext.UserProfiles.Include(prof => prof.User).Where(x => x.User.Id == userId).FirstOrDefaultAsync();
             if (profileModel == null)
@@ -85,9 +85,9 @@ namespace GeoImagerApi.Services.Implementations
 
             var newAvatarName = await _imageService.UploadImage(Enums.ImageTypeEnum.PROFILE_PICTURE, req);
 
-            if (profileModel.ProfilePictureName != "default.png") _imageService.DeleteImage(profileModel.ProfilePictureName);
+            if (profileModel.ProfilePicturePath != "default.png") _imageService.DeleteImage(profileModel.ProfilePicturePath);
 
-            profileModel.ProfilePictureName = newAvatarName;
+            profileModel.ProfilePicturePath = newAvatarName;
             _dbContext.Update(profileModel);
             _dbContext.SaveChanges();
 
@@ -104,11 +104,31 @@ namespace GeoImagerApi.Services.Implementations
 
         public async Task<ImageResponse> GetUserBackgroundPicture(String username)
         {
-            throw new NotImplementedException();
-
+            var profileModel = await _dbContext.UserProfiles.Include(prof => prof.User).Where(x => x.User.Username == username).FirstOrDefaultAsync();
+            var res = await _imageService.GetImage(Enums.ImageTypeEnum.BACKGROUND_PICTURE, profileModel);
+            return res;
         }
 
+        public async Task<UserProfileResponse> SetProfileBackground(UploadImageRequest req, int userId)
+        {
+            var profileModel = await _dbContext.UserProfiles.Include(prof => prof.User).Where(x => x.User.Id == userId).FirstOrDefaultAsync();
+            if (profileModel == null)
+            {
+                var errorResp = new UserProfileResponse { Succes = false, Errors = new List<string>() };
+                errorResp.Errors.Add("User with such id does not exist!");
+                return errorResp;
+            }
 
+            var newBackgroundName = await _imageService.UploadImage(Enums.ImageTypeEnum.BACKGROUND_PICTURE, req);
 
+            if (profileModel.ProfileBackgroundPath != "default.png") _imageService.DeleteImage(profileModel.ProfileBackgroundPath);
+
+            profileModel.ProfileBackgroundPath = newBackgroundName;
+            _dbContext.Update(profileModel);
+            _dbContext.SaveChanges();
+
+            var response = _mapper.Map<UserProfileResponse>(profileModel);
+            return response;
+        }
     }
 }

@@ -11,7 +11,8 @@ namespace GeoImagerApi.DataTransferObjects.Response
         public int UserId { get; set; }
         public String Username { get; set; }
         public String Email { get; set; }
-        public String ProfilePictureName { get; set; }
+        public String ProfilePicturePath { get; set; }
+        public String ProfileBackgroundPath { get; set; }
         public String ProfileDescription { get; set; }
         public DateTime CreationDate { get; set; }
 
