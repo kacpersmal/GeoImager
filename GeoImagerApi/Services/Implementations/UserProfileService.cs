@@ -85,7 +85,7 @@ namespace GeoImagerApi.Services.Implementations
 
             var newAvatarName = await _imageService.UploadImage(Enums.ImageTypeEnum.PROFILE_PICTURE, req);
 
-            if (profileModel.ProfilePicturePath != "default.png") _imageService.DeleteImage(profileModel.ProfilePicturePath);
+            if (profileModel.ProfilePicturePath != "\\images\\avatars\\default.png") _imageService.DeleteImage(profileModel.ProfilePicturePath);
 
             profileModel.ProfilePicturePath = newAvatarName;
             _dbContext.Update(profileModel);
@@ -121,7 +121,7 @@ namespace GeoImagerApi.Services.Implementations
 
             var newBackgroundName = await _imageService.UploadImage(Enums.ImageTypeEnum.BACKGROUND_PICTURE, req);
 
-            if (profileModel.ProfileBackgroundPath != "default.png") _imageService.DeleteImage(profileModel.ProfileBackgroundPath);
+            if (profileModel.ProfileBackgroundPath != "\\images\\backdrounds\\default.png") _imageService.DeleteImage(profileModel.ProfileBackgroundPath);
 
             profileModel.ProfileBackgroundPath = newBackgroundName;
             _dbContext.Update(profileModel);

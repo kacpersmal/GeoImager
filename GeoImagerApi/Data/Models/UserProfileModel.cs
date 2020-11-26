@@ -24,8 +24,8 @@ namespace GeoImagerApi.Data.Models
         public UserProfileModel() 
         { 
             ProfileDescription = "No description :(";
-            ProfilePicturePath = "default.png";
-            ProfileBackgroundPath = "default.png";
+            ProfilePicturePath = "\\images\\avatars\\default.png";
+            ProfileBackgroundPath = "\\images\\backgrounds\\default.png";
         }
     }
 }
