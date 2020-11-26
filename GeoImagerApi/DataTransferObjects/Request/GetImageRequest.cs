@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GeoImagerApi.DataTransferObjects.Request
 {
-    public class GetUserProfilePictureRequest
+    public class GetImageRequest
     {
         public String Username { get; set; }
     }

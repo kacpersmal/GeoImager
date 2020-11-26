@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GeoImagerApi.DataTransferObjects.Request
 {
-    public class ChangeAvatarRequest
+    public class UploadImageRequest
     {
         public IFormFile Image { get; set; }
     }

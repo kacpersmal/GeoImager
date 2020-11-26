@@ -21,14 +21,13 @@ namespace GeoImagerApi.Services.Implementations
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
-
-        public UserProfileService(AppDbContext context,IMapper mapper, IConfiguration configuration, IWebHostEnvironment environment)
+        private readonly IImageService _imageService;
+        public UserProfileService(AppDbContext context,IMapper mapper, IConfiguration configuration, IImageService imageService)
         {
             _dbContext = context;
             _mapper = mapper;
             _configuration = configuration;
-            _environment = environment;
+            _imageService = imageService;
         }
 
         public async Task<UserProfileResponse> EditUserProfileAsync(EditUserProfileRequest req)
@@ -74,7 +73,7 @@ namespace GeoImagerApi.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public async Task<UserProfileResponse> ChangeAvatar(ChangeAvatarRequest req, int userId)
+        public async Task<UserProfileResponse> ChangeAvatar(UploadImageRequest req, int userId)
         {
             var profileModel = await _dbContext.UserProfiles.Include(prof => prof.User).Where(x => x.User.Id == userId).FirstOrDefaultAsync();
             if (profileModel == null)
@@ -84,12 +83,9 @@ namespace GeoImagerApi.Services.Implementations
                 return errorResp;
             }
 
-            var fileName = RandomName() + Path.GetExtension(req.Image.FileName);
-            var root = Path.Combine(_environment.WebRootPath, "images", "avatars");
-            var path = Path.Combine(root, fileName);
-            var newAvatarName = await UploadImage(req.Image, path,fileName);
+            var newAvatarName = await _imageService.UploadImage(Enums.ImageTypeEnum.PROFILE_PICTURE, req);
 
-            if (profileModel.ProfilePictureName != "default.png") DeleteImage(profileModel.ProfilePictureName);
+            if (profileModel.ProfilePictureName != "default.png") _imageService.DeleteImage(profileModel.ProfilePictureName);
 
             profileModel.ProfilePictureName = newAvatarName;
             _dbContext.Update(profileModel);
@@ -99,68 +95,20 @@ namespace GeoImagerApi.Services.Implementations
             return response;
         }
 
-        public async Task<UserImageResponse> GetUserProfilePicture(String username)
+        public async Task<ImageResponse> GetUserProfilePicture(String username)
         {
             var profileModel = await _dbContext.UserProfiles.Include(prof => prof.User).Where(x => x.User.Username == username).FirstOrDefaultAsync();
-            var wwwRootImages = Path.Combine("images", "avatars");
-            var root = Path.Combine(_environment.WebRootPath, wwwRootImages);
-           
-            if (profileModel == null)
-            {
-                return new UserImageResponse { ImageAdress = Path.Combine(wwwRootImages, "default.png") };
-            }
-            if (!File.Exists(Path.Combine(root, profileModel.ProfilePictureName)))
-            {
-                return new UserImageResponse { ImageAdress = Path.Combine(wwwRootImages, "default.png") };
-            }
-
-            return new UserImageResponse { ImageAdress = Path.Combine(wwwRootImages, profileModel.ProfilePictureName) };
+            var res = await _imageService.GetImage(Enums.ImageTypeEnum.PROFILE_PICTURE, profileModel);
+            return res;
         }
 
-        public async Task<UserImageResponse> GetUserBackgroundPicture(String username)
+        public async Task<ImageResponse> GetUserBackgroundPicture(String username)
         {
-            var profileModel = await _dbContext.UserProfiles.Include(prof => prof.User).Where(x => x.User.Username == username).FirstOrDefaultAsync();
-            var wwwRootImages = Path.Combine("images", "backgrounds");
-            var root = Path.Combine(_environment.WebRootPath, wwwRootImages);
-            if (!File.Exists(Path.Combine(root, profileModel.ProfilePictureName)) || profileModel == null)
-            {
-                return new UserImageResponse { ImageAdress = Path.Combine(wwwRootImages, "default.png") };
-            }
+            throw new NotImplementedException();
 
-            return new UserImageResponse { ImageAdress = Path.Combine(wwwRootImages, profileModel.ProfilePictureName) };
         }
 
-        private void DeleteImage(String name)
-        {
-            var path = Path.Combine(_environment.WebRootPath, "images", "avatars",name);
 
-            File.Delete(path);
-        }
-
-        private async Task<String> UploadImage(IFormFile file, String path,String name)
-        {  
-            using (var stream = new FileStream(path, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            return name;
-        }
-        private String RandomName()
-        {
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var stringChars = new char[32];
-            var random = new Random();
-
-            for (int i = 0; i < stringChars.Length; i++)
-            {
-                stringChars[i] = chars[random.Next(chars.Length)];
-            }
-
-            var finalString = new String(stringChars);
-
-            return finalString;
-        }
 
     }
 }

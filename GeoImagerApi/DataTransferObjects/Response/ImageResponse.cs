@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GeoImagerApi.DataTransferObjects.Response
 {
-    public class UserImageResponse
+    public class ImageResponse
     {
         public String ImageAdress { get; set; }
 

@@ -40,7 +40,7 @@ namespace GeoImagerApi.Controllers
 
         [Authorize]
         [HttpPost("avatar")]
-        public async Task<UserProfileResponse> ChangeAvatar([FromForm, FormFileDescriptor("Project JSON file", "The project as a JSON file", true, 52_428_800)] ChangeAvatarRequest req)
+        public async Task<UserProfileResponse> ChangeAvatar([FromForm, FormFileDescriptor("Project JSON file", "The project as a JSON file", true, 52_428_800)] UploadImageRequest req)
         {
             var payload = (UserPayload)HttpContext.Items["User"];
           
@@ -48,7 +48,7 @@ namespace GeoImagerApi.Controllers
             return res;
         }
         [HttpGet("avatar")]
-        public async Task<UserImageResponse> GetUserProfilePicture(String username)
+        public async Task<ImageResponse> GetUserProfilePicture(String username)
         {
             var response = await _userProfileService.GetUserProfilePicture(username);
             return response;
