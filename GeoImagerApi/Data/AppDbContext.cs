@@ -23,6 +23,9 @@ namespace GeoImagerApi.Data
              .HasOne(x => x.UserProfile)
              .WithOne(x => x.User)
              .HasForeignKey<UserProfileModel>(x => x.UserId);
+
+            modelBuilder.Entity<UserProfileModel>().HasMany(x => x.Posts).WithOne(x => x.Owner);
+            
         }
 
     }
