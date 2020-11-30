@@ -7,6 +7,8 @@ namespace GeoImagerApi.Data
     {
         public DbSet<UserModel> Users { get; set; }
         public DbSet<UserProfileModel> UserProfiles { get; set; }
+        public DbSet<UserPostModel> UserPosts { get; set; }
+        public DbSet<UserPostModel> UserComments { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

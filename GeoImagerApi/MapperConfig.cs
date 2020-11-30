@@ -24,7 +24,12 @@ namespace GeoImagerApi
                 .ForMember(x => x.Username, a => a.MapFrom(x => x.User.Username))
                 .ForMember(x => x.Succes, a => a.MapFrom(x => true))
                 .ForMember(x => x.Errors, a => a.MapFrom(x => new List<String>()));
-            
+            CreateMap<String, UserImagePostModel>()
+                .ForMember(x => x.ImageAdress, a => a.MapFrom(x => x));
+
+            CreateMap<UserPostModel, CreatePostResponse>();
+
+          
         }
     }
 }

@@ -3,10 +3,49 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GeoImagerApi.Migrations
 {
-    public partial class UserPostMigration : Migration
+    public partial class ClearMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Verified = table.Column<bool>(type: "bit", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProfilePicturePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfileBackgroundPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfileDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserProfiles_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateTable(
                 name: "UserPostModel",
                 columns: table => new
@@ -27,6 +66,30 @@ namespace GeoImagerApi.Migrations
                     table.ForeignKey(
                         name: "FK_UserPostModel_UserProfiles_OwnerId",
                         column: x => x.OwnerId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserProfileModelUserProfileModel",
+                columns: table => new
+                {
+                    FollowersId = table.Column<int>(type: "int", nullable: false),
+                    FollowingId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserProfileModelUserProfileModel", x => new { x.FollowersId, x.FollowingId });
+                    table.ForeignKey(
+                        name: "FK_UserProfileModelUserProfileModel_UserProfiles_FollowersId",
+                        column: x => x.FollowersId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserProfileModelUserProfileModel_UserProfiles_FollowingId",
+                        column: x => x.FollowingId,
                         principalTable: "UserProfiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -100,6 +163,17 @@ namespace GeoImagerApi.Migrations
                 name: "IX_UserPostModel_OwnerId",
                 table: "UserPostModel",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserProfileModelUserProfileModel_FollowingId",
+                table: "UserProfileModelUserProfileModel",
+                column: "FollowingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserProfiles_UserId",
+                table: "UserProfiles",
+                column: "UserId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -111,7 +185,16 @@ namespace GeoImagerApi.Migrations
                 name: "UserImagePostModel");
 
             migrationBuilder.DropTable(
+                name: "UserProfileModelUserProfileModel");
+
+            migrationBuilder.DropTable(
                 name: "UserPostModel");
+
+            migrationBuilder.DropTable(
+                name: "UserProfiles");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeoImagerApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201128145743_UserPostMigration")]
-    partial class UserPostMigration
+    [Migration("20201128233220_ClearMigration")]
+    partial class ClearMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

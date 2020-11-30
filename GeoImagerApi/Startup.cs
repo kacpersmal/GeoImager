@@ -38,6 +38,7 @@ namespace GeoImagerApi
             services.AddTransient<IAuthService,AuthService>();
             services.AddTransient<IUserProfileService, UserProfileService>();
             services.AddTransient<IImageService, ImageService>();
+            services.AddTransient<IUserPostService, UserPostService>();
 
             services.AddAutoMapper(typeof(MapperConfig));
             services.AddControllers();

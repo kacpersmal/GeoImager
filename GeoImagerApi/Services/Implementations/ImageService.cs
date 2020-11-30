@@ -6,6 +6,7 @@ using GeoImagerApi.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,13 +19,14 @@ namespace GeoImagerApi.Services.Implementations
         private readonly IWebHostEnvironment _environment;
         private readonly String AVATAR_ROOT;
         private readonly String BACKGROUND_ROOT;
+        private readonly String POST_ROOT;
 
         public ImageService(IWebHostEnvironment environment)
         {
             _environment = environment;
             AVATAR_ROOT = Path.Combine(_environment.WebRootPath, "images", "avatars");
             BACKGROUND_ROOT = Path.Combine(_environment.WebRootPath, "images", "backgrounds");
-
+            POST_ROOT = Path.Combine(_environment.WebRootPath, "images", "posts");
         }
         public Task<String> UploadImage(ImageTypeEnum type, UploadImageRequest req)
         {
@@ -35,6 +37,20 @@ namespace GeoImagerApi.Services.Implementations
             var imagePath = UploadImageToServer(req.Image, path);
 
             return Task.FromResult(GetRelativePath(type, newfileName));
+        }
+        public async Task<List<string>> UploadImages(ImageTypeEnum type, ICollection<IFormFile> images)
+        {
+            var result = new List<String>();
+            
+            foreach(IFormFile image in images)
+            {
+                var newfileName = RandomName() + Path.GetExtension(image.FileName);
+                var path = GetPath(type, newfileName);
+                var pathAbs = await UploadImageToServer(image, path);
+                var relPath = GetRelativePath(type, newfileName);
+                result.Add(relPath);
+            }
+            return await Task.FromResult(result);
         }
         public void DeleteImage(string path)
         {
@@ -63,6 +79,8 @@ namespace GeoImagerApi.Services.Implementations
             {
                 case ImageTypeEnum.PROFILE_PICTURE: { path = Path.Combine("images","avatars", name); break; }
                 case ImageTypeEnum.BACKGROUND_PICTURE: { path = Path.Combine("images", "backgrounds", name); break; }
+                case ImageTypeEnum.POST_PICTURE: { path = Path.Combine("images", "posts", name); break; }
+
             }
 
             return path;
@@ -90,6 +108,8 @@ namespace GeoImagerApi.Services.Implementations
             {
                 case ImageTypeEnum.PROFILE_PICTURE: { path = Path.Combine(AVATAR_ROOT, name); break; }
                 case ImageTypeEnum.BACKGROUND_PICTURE: { path = Path.Combine(BACKGROUND_ROOT, name); break; }
+                case ImageTypeEnum.POST_PICTURE: { path = Path.Combine(POST_ROOT, name); break; }
+
             }
 
             return path;
@@ -123,6 +143,6 @@ namespace GeoImagerApi.Services.Implementations
             return finalString;
         }
 
-     
+      
     }
 }
