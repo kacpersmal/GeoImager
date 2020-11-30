@@ -7,5 +7,6 @@ namespace GeoImagerApi.DataTransferObjects.Response
 {
     public class DeletePostResponse
     {
+        public bool Succes { get; set; }
     }
 }

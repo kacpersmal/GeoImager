@@ -9,5 +9,6 @@ namespace GeoImagerApi.Data.Models
     {
         public int Id { get; set; }
         public String ImageAdress { get; set; }
+        public UserPostModel Owner { get; set; }
     }
 }

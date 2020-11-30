@@ -27,7 +27,7 @@ namespace GeoImagerApi.Data
              .HasForeignKey<UserProfileModel>(x => x.UserId);
 
             modelBuilder.Entity<UserProfileModel>().HasMany(x => x.Posts).WithOne(x => x.Owner);
-            
+            modelBuilder.Entity<UserPostModel>().HasMany(x => x.Photos).WithOne(x => x.Owner).OnDelete(DeleteBehavior.Cascade);
         }
 
     }

@@ -41,8 +41,8 @@ namespace GeoImagerApi.Services.Implementations
                 var postModel = new UserPostModel { PostDescription = req.PostDescription, CreationDate = DateTime.UtcNow, Latitude = req.Latitude, Longitude = req.Longitude, Owner = userProfileOwner, Photos = mappedPaths };
                 response = _mapper.Map<CreatePostResponse>(postModel);
 
-                _dbContext.UserPosts.Add(postModel);
-                _dbContext.SaveChanges();
+                await _dbContext.UserPosts.AddAsync(postModel);
+                await _dbContext.SaveChangesAsync();
             }
            return response;
         }
@@ -52,9 +52,21 @@ namespace GeoImagerApi.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public Task<DeletePostResponse> DeletePost(DeletePostRequest req)
+        public async Task<DeletePostResponse> DeletePost(DeletePostRequest req)
         {
-            throw new NotImplementedException();
+            var userProfile = await _dbContext.UserProfiles.Include(x => x.User).Where(x => x.User.Id == req.UserId).FirstOrDefaultAsync();
+            if(userProfile != null)
+            {
+                var post = await _dbContext.UserPosts.Where(x => x.Owner == userProfile && x.Id == req.Id).FirstOrDefaultAsync();
+                if(post != null)
+                {
+                    
+                     _dbContext.UserPosts.Remove(post);
+                     _dbContext.SaveChanges();
+                    return new DeletePostResponse { Succes = true };
+                }
+            }
+        return new DeletePostResponse { Succes = false };
         }
 
         public Task<CreatePostResponse> EditPost(EditPostRequest req)

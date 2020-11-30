@@ -23,13 +23,24 @@ namespace GeoImagerApi.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("/create")]
         public async Task<CreatePostResponse> CreatePost([FromForm, FormFileDescriptor("ProfilePicture", "The project as a JSON file", true, 52_428_800)] CreatePostRequest req)
         {
             var payload = (UserPayload)HttpContext.Items["User"];
             req.UserId = payload.Id;
             var result = await _postService.CreatePost(req);
          
+            return result;
+        }
+
+        [Authorize]
+        [HttpPost("/delete")]
+        public async Task<DeletePostResponse> DeletePost(DeletePostRequest req)
+        {
+            var payload = (UserPayload)HttpContext.Items["User"];
+            req.UserId = payload.Id;
+            var result = await _postService.DeletePost(req);
+
             return result;
         }
     }
