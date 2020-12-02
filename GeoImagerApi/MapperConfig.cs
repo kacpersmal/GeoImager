@@ -29,6 +29,12 @@ namespace GeoImagerApi
 
             CreateMap<UserPostModel, CreatePostResponse>();
 
+
+            CreateMap<UserImagePostModel, ImageResponse>()
+                .ForMember(x => x.ImageAdress, src => src.MapFrom(x => x.ImageAdress));
+
+            CreateMap<UserPostModel, GetPostResponse>();
+
           
         }
     }

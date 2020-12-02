@@ -43,5 +43,13 @@ namespace GeoImagerApi.Controllers
 
             return result;
         }
+
+        [HttpPost("/userposts")]
+        public async Task<UserPostsPaginatedResponse> GetPaginatedUserPosts(GetAllUserPostsPaginatedRequest req)
+        {
+            var result = await _postService.GetUserPaginatedPosts(req);
+
+            return result;
+        }
     }
 }

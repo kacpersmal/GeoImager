@@ -84,9 +84,11 @@ namespace GeoImagerApi.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public Task<UserPostsPaginatedResponse> GetUserPaginatedPosts(GetAllUserPostsPaginatedRequest req)
+        public async Task<UserPostsPaginatedResponse> GetUserPaginatedPosts(GetAllUserPostsPaginatedRequest req)
         {
-            throw new NotImplementedException();
+            var posts =  _dbContext.UserPosts.Include(x => x.Owner).Include(x => x.Photos).Where(x => x.Owner.Id == req.UserId ).Skip((req.Page-1) * req.MaxPerPage).Take(req.MaxPerPage).ToList();
+            var postResponses = _mapper.Map<List<GetPostResponse>>(posts);
+            return new UserPostsPaginatedResponse { MaxPerPage = req.MaxPerPage, Page = req.Page, Posts = postResponses };
         }
     }
 }
