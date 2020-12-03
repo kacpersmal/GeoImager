@@ -3,6 +3,7 @@ using GeoImagerApi.Data;
 using GeoImagerApi.Data.Models;
 using GeoImagerApi.DataTransferObjects.Request;
 using GeoImagerApi.DataTransferObjects.Response;
+using GeoImagerApi.Helpers;
 using GeoImagerApi.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -88,9 +89,21 @@ namespace GeoImagerApi.Services.Implementations
             return null;
         }
 
-        public Task<GetPaginatedLocationPostsResponse> GetPaginatedPostsByLocation(GetPaginatedLocationPostsRequest req)
+        public async Task<GetPaginatedLocationPostsResponse> GetPaginatedPostsByLocation(GetPaginatedLocationPostsRequest req)
         {
-            throw new NotImplementedException();
+            var postsFromDb = _dbContext.UserPosts.Include(x => x.Owner).Include(x => x.Photos).ToList();
+            var postsInRange = new List<GetPostResponse>();
+            postsFromDb.ForEach(post =>
+            {
+                if (CoordinateHelper.IsCoordinateInRange(post.Latitude, post.Longitude, req.Latitude, req.Longitude, req.Range))
+                {
+                    postsInRange.Add(_mapper.Map<GetPostResponse>(post));
+                }
+            });
+
+            postsInRange = postsInRange.OrderByDescending(x => x.CreationDate).Skip((req.Page - 1) * req.MaxPerPage).Take(req.MaxPerPage).ToList();
+
+            return new GetPaginatedLocationPostsResponse { Latitude = req.Latitude, Longitude = req.Longitude, MaxPerPage = req.MaxPerPage, Page = req.Page, Posts = postsInRange  };
         }
 
         public Task<GetFeedPostsPaginatedResponse> GetUserPaginatedFeed(GetFeedPostsPaginatedRequest req)
@@ -100,10 +113,13 @@ namespace GeoImagerApi.Services.Implementations
 
         public async Task<UserPostsPaginatedResponse> GetUserPaginatedPosts(GetAllUserPostsPaginatedRequest req)
         {
-            var posts =  _dbContext.UserPosts.Include(x => x.Owner).Include(x => x.Photos).Where(x => x.Owner.Id == req.UserId ).Skip((req.Page-1) * req.MaxPerPage).Take(req.MaxPerPage).ToList();
+            var posts =  _dbContext.UserPosts.Include(x => x.Owner).Include(x => x.Photos).OrderByDescending(x => x.CreationDate).Where(x => x.Owner.Id == req.UserId ).Skip((req.Page-1) * req.MaxPerPage).Take(req.MaxPerPage).ToList();
             var postResponses = _mapper.Map<List<GetPostResponse>>(posts);
 
             return new UserPostsPaginatedResponse { MaxPerPage = req.MaxPerPage, Page = req.Page, Posts = postResponses };
         }
+
+      
+
     }
 }

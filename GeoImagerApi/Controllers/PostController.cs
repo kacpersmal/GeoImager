@@ -62,5 +62,13 @@ namespace GeoImagerApi.Controllers
 
             return result;
         }
+
+        [HttpPost("/getByLocation")]
+        public async Task<GetPaginatedLocationPostsResponse> EditPost(GetPaginatedLocationPostsRequest req)
+        {
+            var result = await _postService.GetPaginatedPostsByLocation(req);
+
+            return result;
+        }
     }
 }
