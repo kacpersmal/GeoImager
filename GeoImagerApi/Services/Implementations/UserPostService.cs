@@ -69,9 +69,23 @@ namespace GeoImagerApi.Services.Implementations
         return new DeletePostResponse { Succes = false };
         }
 
-        public Task<CreatePostResponse> EditPost(EditPostRequest req)
+        public async Task<CreatePostResponse> EditPost(EditPostRequest req)
         {
-            throw new NotImplementedException();
+            var post = await _dbContext.UserPosts.Include(x => x.Owner.User).Where(x => x.Owner.User.Id == req.UserId && x.Id == req.PostId).FirstOrDefaultAsync();
+
+            if(post != null)
+            {
+                post.Latitude = req.Latitude;
+                post.Longitude = req.Longitude;
+                post.PostDescription = req.PostDescription;
+                 _dbContext.UserPosts.Update(post);
+                 await _dbContext.SaveChangesAsync();
+                var mapped = _mapper.Map<CreatePostResponse>(post);
+
+                return mapped;
+            }
+
+            return null;
         }
 
         public Task<GetPaginatedLocationPostsResponse> GetPaginatedPostsByLocation(GetPaginatedLocationPostsRequest req)

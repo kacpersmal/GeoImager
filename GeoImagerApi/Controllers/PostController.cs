@@ -51,5 +51,16 @@ namespace GeoImagerApi.Controllers
 
             return result;
         }
+
+        [Authorize]
+        [HttpPost("/edit")]
+        public async Task<CreatePostResponse> EditPost([FromForm] EditPostRequest req)
+        {
+            var payload = (UserPayload)HttpContext.Items["User"];
+            req.UserId = payload.Id;
+            var result = await _postService.EditPost(req);
+
+            return result;
+        }
     }
 }
