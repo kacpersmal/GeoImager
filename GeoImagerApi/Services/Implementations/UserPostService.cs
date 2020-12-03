@@ -102,6 +102,7 @@ namespace GeoImagerApi.Services.Implementations
         {
             var posts =  _dbContext.UserPosts.Include(x => x.Owner).Include(x => x.Photos).Where(x => x.Owner.Id == req.UserId ).Skip((req.Page-1) * req.MaxPerPage).Take(req.MaxPerPage).ToList();
             var postResponses = _mapper.Map<List<GetPostResponse>>(posts);
+
             return new UserPostsPaginatedResponse { MaxPerPage = req.MaxPerPage, Page = req.Page, Posts = postResponses };
         }
     }
