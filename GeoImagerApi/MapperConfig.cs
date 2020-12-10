@@ -13,10 +13,10 @@ namespace GeoImagerApi
     {
         public MapperConfig()
         {
-            CreateMap<UserModel, UserProfileFollowResponse>()
+            CreateMap<UserModel, UserProfileFollowerResponse>()
              .ForMember(x => x.Id, a => a.MapFrom(x => x.Id))
              .ForMember(x => x.Name, a => a.MapFrom(x => x.Username))
-             .ForMember(x => x.PorfilePicture, a => a.MapFrom(x => x.UserProfile.ProfilePicturePath));
+             .ForMember(x => x.ProfilePicture, a => a.MapFrom(x => x.UserProfile.ProfilePicturePath));
 
             CreateMap<UserProfileModel, UserProfileResponse>()
                 .ForMember(x => x.CreationDate, a => a.MapFrom(x => x.User.CreationDate))
@@ -37,16 +37,17 @@ namespace GeoImagerApi
 
             CreateMap<UserPostModel, CreatePostResponse>();
             
-
             CreateMap<UserImagePostModel, ImageResponse>()
                 .ForMember(x => x.ImageAdress, src => src.MapFrom(x => x.ImageAdress));
 
             CreateMap<UserPostModel, GetPostResponse>();
 
-         
+            CreateMap<Follower, UserProfileFollowerResponse>()
+                .ForMember(x => x.Id, s => s.MapFrom(x => x.FollowedById))
+                .ForMember(x => x.Name, s => s.MapFrom(x => x.FollowedBy.User.Username))
+                .ForMember(x => x.ProfilePicture, s => s.MapFrom(x => x.FollowedBy.ProfilePicturePath));
 
-          
-
+            
         }
     }
 }

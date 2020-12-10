@@ -59,13 +59,20 @@ namespace GeoImagerApi.Controllers
         }
 
         [Authorize]
-        [HttpPost("/follow")]
+        [HttpPost("follow")]
         public async Task<bool> Follow(FollowRequest req)
         {
             var payload = (UserPayload)HttpContext.Items["User"];
             req.UserId = payload.Id;
 
             return await _userProfileService.FollowUser(req);
+        }
+
+        [HttpPost("followers")]
+        public async Task<UserProfileFollowingResponse> GetFollowers(int id)
+        {
+            var res = await _userProfileService.GetUserProfileFollowers(new GetUserProfileFollowersRequest { UserId = id });
+            return res;
         }
     }
 }

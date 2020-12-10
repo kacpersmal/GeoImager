@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeoImagerApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201128233220_ClearMigration")]
-    partial class ClearMigration
+    [Migration("20201210144652_NewFollowSystemTwo")]
+    partial class NewFollowSystemTwo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,6 +52,28 @@ namespace GeoImagerApi.Migrations
                     b.ToTable("CommentModel");
                 });
 
+            modelBuilder.Entity("GeoImagerApi.Data.Models.Follower", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("FollowedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FollowedById");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Follower");
+                });
+
             modelBuilder.Entity("GeoImagerApi.Data.Models.UserImagePostModel", b =>
                 {
                     b.Property<int>("Id")
@@ -62,12 +84,12 @@ namespace GeoImagerApi.Migrations
                     b.Property<string>("ImageAdress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserPostModelId")
+                    b.Property<int?>("OwnerId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserPostModelId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("UserImagePostModel");
                 });
@@ -161,21 +183,6 @@ namespace GeoImagerApi.Migrations
                     b.ToTable("UserProfiles");
                 });
 
-            modelBuilder.Entity("UserProfileModelUserProfileModel", b =>
-                {
-                    b.Property<int>("FollowersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FollowingId")
-                        .HasColumnType("int");
-
-                    b.HasKey("FollowersId", "FollowingId");
-
-                    b.HasIndex("FollowingId");
-
-                    b.ToTable("UserProfileModelUserProfileModel");
-                });
-
             modelBuilder.Entity("GeoImagerApi.Data.Models.CommentModel", b =>
                 {
                     b.HasOne("GeoImagerApi.Data.Models.UserModel", "Commenter")
@@ -191,11 +198,33 @@ namespace GeoImagerApi.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("GeoImagerApi.Data.Models.Follower", b =>
+                {
+                    b.HasOne("GeoImagerApi.Data.Models.UserProfileModel", "FollowedBy")
+                        .WithMany("Following")
+                        .HasForeignKey("FollowedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GeoImagerApi.Data.Models.UserProfileModel", "User")
+                        .WithMany("Followers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("FollowedBy");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("GeoImagerApi.Data.Models.UserImagePostModel", b =>
                 {
-                    b.HasOne("GeoImagerApi.Data.Models.UserPostModel", null)
+                    b.HasOne("GeoImagerApi.Data.Models.UserPostModel", "Owner")
                         .WithMany("Photos")
-                        .HasForeignKey("UserPostModelId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("GeoImagerApi.Data.Models.UserPostModel", b =>
@@ -218,21 +247,6 @@ namespace GeoImagerApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UserProfileModelUserProfileModel", b =>
-                {
-                    b.HasOne("GeoImagerApi.Data.Models.UserProfileModel", null)
-                        .WithMany()
-                        .HasForeignKey("FollowersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GeoImagerApi.Data.Models.UserProfileModel", null)
-                        .WithMany()
-                        .HasForeignKey("FollowingId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("GeoImagerApi.Data.Models.UserModel", b =>
                 {
                     b.Navigation("UserProfile");
@@ -247,6 +261,10 @@ namespace GeoImagerApi.Migrations
 
             modelBuilder.Entity("GeoImagerApi.Data.Models.UserProfileModel", b =>
                 {
+                    b.Navigation("Followers");
+
+                    b.Navigation("Following");
+
                     b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618

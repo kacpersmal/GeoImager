@@ -14,8 +14,8 @@ namespace GeoImagerApi.Data.Models
 
         public String ProfileDescription { get; set; }
 
-        public ICollection<UserProfileModel> Followers { get; set; }
-        public ICollection<UserProfileModel> Following { get; set; }
+        public ICollection<Follower> Followers { get; set; }
+        public ICollection<Follower> Following { get; set; }
         public ICollection<UserPostModel> Posts { get; set; }
         public int UserId { get; set; }
         public virtual UserModel User { get; set; }

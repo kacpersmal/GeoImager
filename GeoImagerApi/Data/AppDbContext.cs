@@ -9,6 +9,7 @@ namespace GeoImagerApi.Data
         public DbSet<UserProfileModel> UserProfiles { get; set; }
         public DbSet<UserPostModel> UserPosts { get; set; }
         public DbSet<UserPostModel> UserComments { get; set; }
+        public DbSet<Follower> Followers { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -17,9 +18,7 @@ namespace GeoImagerApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserProfileModel>()
-                .HasMany(x => x.Followers)
-                .WithMany(x => x.Following);
+          
             
             modelBuilder.Entity<UserModel>()
              .HasOne(x => x.UserProfile)
@@ -28,6 +27,10 @@ namespace GeoImagerApi.Data
 
             modelBuilder.Entity<UserProfileModel>().HasMany(x => x.Posts).WithOne(x => x.Owner);
             modelBuilder.Entity<UserPostModel>().HasMany(x => x.Photos).WithOne(x => x.Owner).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Follower>()
+                .HasOne(x => x.User).WithMany(x => x.Followers).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+
         }
 
     }

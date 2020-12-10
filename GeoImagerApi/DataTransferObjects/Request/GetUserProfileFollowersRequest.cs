@@ -7,5 +7,7 @@ namespace GeoImagerApi.DataTransferObjects.Request
 {
     public class GetUserProfileFollowersRequest
     {
+        public int UserId { get; set; }
+
     }
 }

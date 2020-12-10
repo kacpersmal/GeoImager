@@ -15,8 +15,8 @@ namespace GeoImagerApi.Services.Interfaces
 
         public Task<UserProfileResponse> EditUserProfileAsync(EditUserProfileRequest req);
         public Task<UserProfileResponse> GetUserProfileByUserNameAsync(String name);
-        public UserProfileFollowersResponse GetUserProfileFollowers(GetUserProfileFollowersRequest req);
-        public UserProfileFollowingResponse GetUserProfileFollowing(GetUserProfileFollowingRequest req);
+        public Task<UserProfileFollowingResponse> GetUserProfileFollowers(GetUserProfileFollowersRequest req);
+        public Task<UserProfileFollowingResponse> GetUserProfileFollowing(GetUserProfileFollowingRequest req);
         public Task<bool> FollowUser(FollowRequest req);
         public Task<ImageResponse> GetUserProfilePicture(String username);
         public Task<ImageResponse> GetUserBackgroundPicture(String username);

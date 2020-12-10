@@ -9,6 +9,6 @@ namespace GeoImagerApi.DataTransferObjects.Response
     {
         public int Id { get; set; }
         public String Name { get; set; }
-        public String PorfilePicture { get; set; }
+        public String ProfilePicture { get; set; }
     }
 }

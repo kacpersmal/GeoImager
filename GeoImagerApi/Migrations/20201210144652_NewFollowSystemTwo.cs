@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GeoImagerApi.Migrations
 {
-    public partial class ClearMigration : Migration
+    public partial class NewFollowSystemTwo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -47,6 +47,32 @@ namespace GeoImagerApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Follower",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    FollowedById = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Follower", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Follower_UserProfiles_FollowedById",
+                        column: x => x.FollowedById,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Follower_UserProfiles_UserId",
+                        column: x => x.UserId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserPostModel",
                 columns: table => new
                 {
@@ -66,30 +92,6 @@ namespace GeoImagerApi.Migrations
                     table.ForeignKey(
                         name: "FK_UserPostModel_UserProfiles_OwnerId",
                         column: x => x.OwnerId,
-                        principalTable: "UserProfiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserProfileModelUserProfileModel",
-                columns: table => new
-                {
-                    FollowersId = table.Column<int>(type: "int", nullable: false),
-                    FollowingId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserProfileModelUserProfileModel", x => new { x.FollowersId, x.FollowingId });
-                    table.ForeignKey(
-                        name: "FK_UserProfileModelUserProfileModel_UserProfiles_FollowersId",
-                        column: x => x.FollowersId,
-                        principalTable: "UserProfiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserProfileModelUserProfileModel_UserProfiles_FollowingId",
-                        column: x => x.FollowingId,
                         principalTable: "UserProfiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -131,17 +133,17 @@ namespace GeoImagerApi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ImageAdress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserPostModelId = table.Column<int>(type: "int", nullable: true)
+                    OwnerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserImagePostModel", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserImagePostModel_UserPostModel_UserPostModelId",
-                        column: x => x.UserPostModelId,
+                        name: "FK_UserImagePostModel_UserPostModel_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "UserPostModel",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -155,19 +157,24 @@ namespace GeoImagerApi.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserImagePostModel_UserPostModelId",
+                name: "IX_Follower_FollowedById",
+                table: "Follower",
+                column: "FollowedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Follower_UserId",
+                table: "Follower",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserImagePostModel_OwnerId",
                 table: "UserImagePostModel",
-                column: "UserPostModelId");
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPostModel_OwnerId",
                 table: "UserPostModel",
                 column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserProfileModelUserProfileModel_FollowingId",
-                table: "UserProfileModelUserProfileModel",
-                column: "FollowingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfiles_UserId",
@@ -182,10 +189,10 @@ namespace GeoImagerApi.Migrations
                 name: "CommentModel");
 
             migrationBuilder.DropTable(
-                name: "UserImagePostModel");
+                name: "Follower");
 
             migrationBuilder.DropTable(
-                name: "UserProfileModelUserProfileModel");
+                name: "UserImagePostModel");
 
             migrationBuilder.DropTable(
                 name: "UserPostModel");

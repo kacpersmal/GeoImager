@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GeoImagerApi.DataTransferObjects.Response
+namespace GeoImagerApi.Enums
 {
-    public class UserProfileFollowersResponse
+    public enum FollowerType
     {
+        Following,Follower
     }
 }

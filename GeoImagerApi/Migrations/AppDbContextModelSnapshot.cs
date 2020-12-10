@@ -50,6 +50,31 @@ namespace GeoImagerApi.Migrations
                     b.ToTable("CommentModel");
                 });
 
+            modelBuilder.Entity("GeoImagerApi.Data.Models.Follower", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("FollowedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FollowerType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FollowedById");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Followers");
+                });
+
             modelBuilder.Entity("GeoImagerApi.Data.Models.UserImagePostModel", b =>
                 {
                     b.Property<int>("Id")
@@ -159,21 +184,6 @@ namespace GeoImagerApi.Migrations
                     b.ToTable("UserProfiles");
                 });
 
-            modelBuilder.Entity("UserProfileModelUserProfileModel", b =>
-                {
-                    b.Property<int>("FollowersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FollowingId")
-                        .HasColumnType("int");
-
-                    b.HasKey("FollowersId", "FollowingId");
-
-                    b.HasIndex("FollowingId");
-
-                    b.ToTable("UserProfileModelUserProfileModel");
-                });
-
             modelBuilder.Entity("GeoImagerApi.Data.Models.CommentModel", b =>
                 {
                     b.HasOne("GeoImagerApi.Data.Models.UserModel", "Commenter")
@@ -187,6 +197,25 @@ namespace GeoImagerApi.Migrations
                     b.Navigation("Commenter");
 
                     b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("GeoImagerApi.Data.Models.Follower", b =>
+                {
+                    b.HasOne("GeoImagerApi.Data.Models.UserProfileModel", "FollowedBy")
+                        .WithMany("Following")
+                        .HasForeignKey("FollowedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GeoImagerApi.Data.Models.UserProfileModel", "User")
+                        .WithMany("Followers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("FollowedBy");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GeoImagerApi.Data.Models.UserImagePostModel", b =>
@@ -219,21 +248,6 @@ namespace GeoImagerApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UserProfileModelUserProfileModel", b =>
-                {
-                    b.HasOne("GeoImagerApi.Data.Models.UserProfileModel", null)
-                        .WithMany()
-                        .HasForeignKey("FollowersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GeoImagerApi.Data.Models.UserProfileModel", null)
-                        .WithMany()
-                        .HasForeignKey("FollowingId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("GeoImagerApi.Data.Models.UserModel", b =>
                 {
                     b.Navigation("UserProfile");
@@ -248,6 +262,10 @@ namespace GeoImagerApi.Migrations
 
             modelBuilder.Entity("GeoImagerApi.Data.Models.UserProfileModel", b =>
                 {
+                    b.Navigation("Followers");
+
+                    b.Navigation("Following");
+
                     b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618

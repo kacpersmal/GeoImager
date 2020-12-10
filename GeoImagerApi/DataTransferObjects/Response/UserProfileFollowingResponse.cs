@@ -7,5 +7,6 @@ namespace GeoImagerApi.DataTransferObjects.Response
 {
     public class UserProfileFollowingResponse
     {
+        public List<UserProfileFollowerResponse> Followers { get; set; }
     }
 }

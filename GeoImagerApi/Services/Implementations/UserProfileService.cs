@@ -3,6 +3,7 @@ using GeoImagerApi.Data;
 using GeoImagerApi.Data.Models;
 using GeoImagerApi.DataTransferObjects.Request;
 using GeoImagerApi.DataTransferObjects.Response;
+using GeoImagerApi.Enums;
 using GeoImagerApi.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -63,12 +64,14 @@ namespace GeoImagerApi.Services.Implementations
             return resp;
         }
 
-        public UserProfileFollowersResponse GetUserProfileFollowers(GetUserProfileFollowersRequest req)
+        public async Task<UserProfileFollowingResponse> GetUserProfileFollowers(GetUserProfileFollowersRequest req)
         {
-            throw new NotImplementedException();
+            var followersDb = _dbContext.Followers.Include(x => x.FollowedBy).Include(x => x.User).Where(x => x.UserId == req.UserId && x.FollowerType == FollowerType.Follower);
+            var followersMapped = _mapper.Map<List<UserProfileFollowerResponse>>(followersDb);
+            return new UserProfileFollowingResponse { Followers = followersMapped};
         }
 
-        public UserProfileFollowingResponse GetUserProfileFollowing(GetUserProfileFollowingRequest req)
+        public Task<UserProfileFollowingResponse> GetUserProfileFollowing(GetUserProfileFollowingRequest req)
         {
             throw new NotImplementedException();
         }
@@ -134,25 +137,17 @@ namespace GeoImagerApi.Services.Implementations
         public async Task<bool> FollowUser(FollowRequest req)
         {
             var user = await _dbContext.UserProfiles.Include(x => x.User).Where(x => x.User.Id == req.UserId).FirstOrDefaultAsync();
-            var follow = await _dbContext.UserProfiles.Include(x => x.User).Include(x => x.Followers).Where(x => x.User.Id == req.FollowedUserId).FirstOrDefaultAsync();
+            var toFollow = await _dbContext.UserProfiles.Include(x => x.User).Where(x => x.User.Id == req.FollowedUserId).FirstOrDefaultAsync();
+            var follower = new Follower { User = toFollow, FollowerType = FollowerType.Follower, FollowedBy = user };
 
-            if(user != null && follow != null)
+            if(user != null && toFollow !=null && (user != toFollow))
             {
-                if (user != follow)
-                {
-                    if (follow.Followers.Contains(user))
-                    {
-                        follow.Followers.Remove(user);
-                    }
-                    else
-                    {
-                        follow.Followers.Add(user);
-                    }
-                    await _dbContext.SaveChangesAsync();
-                    return true;
-
-                }
+                _dbContext.Followers.Add(follower);
+                await _dbContext.SaveChangesAsync();
+                return true;
             }
+
+            
             return false;
         }
     }
