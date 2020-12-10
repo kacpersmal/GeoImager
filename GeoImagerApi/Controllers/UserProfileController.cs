@@ -57,5 +57,15 @@ namespace GeoImagerApi.Controllers
             var res = await _userProfileService.SetProfileBackground(req, payload.Id);
             return res;
         }
+
+        [Authorize]
+        [HttpPost("/follow")]
+        public async Task<bool> Follow(FollowRequest req)
+        {
+            var payload = (UserPayload)HttpContext.Items["User"];
+            req.UserId = payload.Id;
+
+            return await _userProfileService.FollowUser(req);
+        }
     }
 }

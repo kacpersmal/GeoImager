@@ -50,7 +50,7 @@ namespace GeoImagerApi.Services.Implementations
 
         public async Task<UserProfileResponse> GetUserProfileByUserNameAsync(String name)
         {
-            var profileModel = await _dbContext.UserProfiles.Include(prof => prof.User).Where(x => x.User.Username == name).FirstOrDefaultAsync();
+            var profileModel = await _dbContext.UserProfiles.Include(prof => prof.User).Include(prof => prof.Followers).Include(prof => prof.Following).Where(x => x.User.Username == name).FirstOrDefaultAsync();
             if(profileModel == null)
             {
                 var errorResp = new UserProfileResponse { Succes = false, Errors = new List<string>() };
@@ -129,6 +129,31 @@ namespace GeoImagerApi.Services.Implementations
 
             var response = _mapper.Map<UserProfileResponse>(profileModel);
             return response;
+        }
+
+        public async Task<bool> FollowUser(FollowRequest req)
+        {
+            var user = await _dbContext.UserProfiles.Include(x => x.User).Where(x => x.User.Id == req.UserId).FirstOrDefaultAsync();
+            var follow = await _dbContext.UserProfiles.Include(x => x.User).Include(x => x.Followers).Where(x => x.User.Id == req.FollowedUserId).FirstOrDefaultAsync();
+
+            if(user != null && follow != null)
+            {
+                if (user != follow)
+                {
+                    if (follow.Followers.Contains(user))
+                    {
+                        follow.Followers.Remove(user);
+                    }
+                    else
+                    {
+                        follow.Followers.Add(user);
+                    }
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+
+                }
+            }
+            return false;
         }
     }
 }
