@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GeoImagerApi.DataTransferObjects.Response
 {
-    public class UserProfileFollowResponse
+    public class UserProfileFollowerResponse
     {
         public int Id { get; set; }
         public String Name { get; set; }
